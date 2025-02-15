@@ -10,11 +10,11 @@
 #include "mbed.h"
 #include <cstdint>
 #include <ctime>
+#include "LITE_EPS.h"
 
 RawSerial pc(USBTX,USBRX,9600);
-
 I2C fs3000(I2C_SDA, I2C_SCL);
-
+LITE_EPS eps(PA_0,PA_4);
 #define FS3000_DEVICE_ADDRESS 0x28 << 1
 #define FS3000_DATA_LENGTH    5
 
@@ -24,11 +24,12 @@ uint16_t read_data();
 float get_wind_velocity();
 
 int main() {
-  while(1) {
-    float wind_speed = get_wind_velocity();
-    pc.printf("wind speed: %.2f [m/s]\r\n", wind_speed);
-    wait(1);
-  }
+    eps.turn_on_regulator(); 
+    while(1) {
+        float wind_speed = get_wind_velocity();
+        pc.printf("wind speed: %.2f [m/s]\r\n", wind_speed);
+        wait(1);
+    }
 }
 
 uint16_t read_raw_data() {
